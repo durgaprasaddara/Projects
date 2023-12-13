@@ -1,0 +1,315 @@
+#Source code.
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd 
+import numpy as np
+
+
+# In[2]:
+
+
+df=pd.read_csv(r"C:\Users\prasad\OneDrive\Desktop\Pokemon.csv")
+
+
+# In[3]:
+
+
+df
+
+
+# In[4]:
+
+
+df.head()
+
+
+# In[5]:
+
+
+df.info()
+
+
+# In[6]:
+
+
+df.describe()
+
+
+# In[7]:
+
+
+df.isnull().sum()
+
+
+# In[8]:
+
+
+df['Type 2'].unique()
+
+
+# In[9]:
+
+
+import random
+unique_types = df['Type 2'].dropna().unique()
+df['Type 2'] = df['Type 2'].apply(lambda x: random.choice(unique_types) if pd.isnull(x) else x)
+
+
+# In[10]:
+
+
+df.head(10)
+
+
+# In[11]:
+
+
+df.isnull().sum()
+
+
+# In[12]:
+
+
+# Number of null values you want to add
+num_null_values = 10
+# Randomly selecting indices to set as null values
+null_indices = np.random.choice(df.index, num_null_values, replace=False)
+# Adding null values to 'Column1' at the selected indices
+df.loc[null_indices, 'Total'] = np.nan
+
+
+# In[13]:
+
+
+df.isnull().sum()
+
+
+# In[14]:
+
+
+#rows with null values 
+nulls=df[pd.isnull(df['Total'])]
+
+
+# In[15]:
+
+
+nulls
+
+
+# In[16]:
+
+
+#filling null values with the mean of that column
+df['Total']=df['Total'].fillna(df['Total'].mean())
+
+
+# In[17]:
+
+
+df
+
+
+# In[18]:
+
+
+# Adding a new column 'Overall Sum' containing the sum of numerical columns
+df['Overall Sum'] = df[['Total', 'HP', 'Attack', 'Defense','Sp. Atk','Sp. Def','Speed']].sum(axis=1, skipna=True)
+
+
+# In[19]:
+
+
+df
+
+# applying machine learning models like Logistic Regression,Naive Bayes,Decision Tree
+# # logistic regression
+
+# In[20]:
+
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+
+# In[21]:
+
+
+#Excluding un-necessary columns..
+df = df.drop(['#','Name','Type 1','Type 2','Overall Sum'], axis=1)
+
+
+# In[22]:
+
+
+# Splitting the data into features and target
+X = df.drop(['Legendary'], axis=1)  # Features
+y = df['Legendary']  # Target
+
+
+# In[23]:
+
+
+X
+
+
+# In[24]:
+
+
+y
+
+
+# In[25]:
+
+
+# Splitting the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# In[26]:
+
+
+# Standardize numerical features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+X_test
+
+
+# In[27]:
+
+
+# Initialize and train the Logistic Regression model
+logreg_model = LogisticRegression(random_state=42)
+logreg_model.fit(X_train_scaled, y_train)
+
+
+# In[28]:
+
+
+# Make predictions
+logreg_predictions = logreg_model.predict(X_test_scaled)
+
+
+# In[29]:
+
+
+# Calculate accuracy
+logreg_accuracy = accuracy_score(y_test, logreg_predictions)
+print("Logistic Regression Accuracy:", logreg_accuracy)
+
+
+# # Predicting class through input given by the user
+
+# In[30]:
+
+
+# Example input features provided by the user
+user_input_features = [[420,70,75,74,90,89,60,5]]
+# Standardize user input features using the same scaler object used for training
+user_input_scaled = scaler.transform(user_input_features)
+
+# Predict using the trained Logistic Regression model
+logreg_prediction = logreg_model.predict(user_input_scaled)
+
+# Print the predicted class
+print("Predicted Class (Logistic Regression):", logreg_prediction)
+
+
+# # Decision Tree
+
+# In[31]:
+
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+
+# In[32]:
+
+
+# Splitting the data into features and target
+X = df.drop(['Legendary'], axis=1)  # Features
+y = df['Legendary']  # Target
+
+
+# In[33]:
+
+
+# Splitting the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# In[34]:
+
+
+# Initialize and train the Decision Tree classifier
+tree_model = DecisionTreeClassifier(random_state=42)
+tree_model.fit(X_train, y_train)
+
+
+# In[35]:
+
+
+# Make predictions
+tree_predictions = tree_model.predict(X_test)
+
+
+# In[36]:
+
+
+# Calculate accuracy
+tree_accuracy = accuracy_score(y_test, tree_predictions)
+print("Decision Tree Accuracy:", tree_accuracy)
+
+
+# # Naive Bayes Classification
+
+# In[37]:
+
+
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+
+
+# In[38]:
+
+
+# Initialize and train the Gaussian Naive Bayes model
+nb_model = GaussianNB()
+nb_model.fit(X_train, y_train) 
+
+
+# In[39]:
+
+
+# Make predictions
+nb_predictions = nb_model.predict(X_test)
+
+
+# In[40]:
+
+
+
+# Calculate accuracy
+nb_accuracy = accuracy_score(y_test, nb_predictions)
+print("Naive Bayes Accuracy:", nb_accuracy)
+
+
+# In[41]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
