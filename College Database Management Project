@@ -1,0 +1,92 @@
+#source codes.
+
+#1.frontend page HTML Code
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Details</title>
+</head>
+<body bgcolor="Gray">
+    <h1 align="Center"><font size="5" color="Blue" face="Italic">Student Information</font></h1>
+    <form method="post" action="newphp.php">
+        <label>Student ID: &nbsp</label>
+        <input type="text" size="20" placeholder="Enter Your ID" name="student_id">
+        <br><br>
+        <label>Name&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:&nbsp&nbsp</label>
+        <input type="text" size="20" placeholder="Enter Your Name" name="student_name">
+        <br><br>
+        <label>Course&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:&nbsp&nbsp</label>
+        <select id="Course" name="course">
+            <option value="" disabled selected>Select Course</option>
+            <option value="DSSTCS">DSSTCS</option>
+            <option value="BCA">BCA</option>
+            <option value="MPCS">MPCS</option>
+            <option value="MCCS">MCCS</option>
+            <option value="BCOM">BCOM</option>
+            <option value="BBA">BBA</option>
+            <option value="MECS">MECS</option>
+            <!-- other options -->
+        </select>
+        <br><br>
+        <label>Age&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:&nbsp&nbsp</label>
+        <input type="text" size="20" placeholder="Enter Your Age" name="student_age">
+        <br><br>
+        <label>Ph no&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:&nbsp&nbsp</label>
+        <input type="text" size="20" placeholder="Enter Your Phone Number" name="phone_number">
+        <br><br>
+        <label>Address&nbsp&nbsp&nbsp&nbsp:&nbsp&nbsp</label>
+        <textarea rows="4" cols="20" name="address"></textarea>
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+
+
+
+
+
+
+#2.Backend PHP Code.
+
+
+<?php
+// Assuming you have a MySQL database
+$servername = "localhost";
+$username = "root";
+$password = "root";
+$dbname = "college";
+
+// Create a connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $student_id = $_POST["student_id"];
+    $student_name = $_POST["student_name"];
+    $course = $_POST["course"];
+    $student_age = $_POST["student_age"];
+    $phone_number = $_POST["phone_number"];
+    $address = $_POST["address"];
+
+    // Insert data into the database
+    $sql = "INSERT INTO student_dt(st_id, st_name, course,age, ph_no, address)
+            VALUES ($student_id, '$student_name', '$course', $student_age, $phone_number, '$address')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Data inserted successfully!";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+
+// Close the connection
+$conn->close();
+?>
+
